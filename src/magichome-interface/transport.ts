@@ -76,7 +76,8 @@ export class Transport {
     return this.queue.add(async () => (
       this.connect(async () => {
         await this.write(buffer, useChecksum, _timeout);
-        return this.read();
+        const data = this.read();
+        return data;
       })
     )); 
   }
@@ -87,9 +88,10 @@ export class Transport {
       const chk = checksum(buffer);
       const payload = Buffer.concat([buffer, Buffer.from([chk])]);
       sent = this.socket.write(payload, useChecksum, _timeout);
-
+      await wait(this.socket, 'data', 200);
     } else {
       sent = this.socket.write(buffer, useChecksum, _timeout);
+      await wait(this.socket, 'data', 200);
     }
  
 
