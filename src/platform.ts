@@ -413,7 +413,7 @@ export class HomebridgeMagichomeDynamicPlatform implements DynamicPlatformPlugin
   async createAccessory(device){
     
     const initialState = await this.getInitialState (device.ipAddress);
-    let lightVersion = initialState.lightVersion;
+    let lightVersion;
     const lightVersionModifier = initialState.lightVersionModifier;
     
     let lightParameters;
@@ -426,6 +426,8 @@ export class HomebridgeMagichomeDynamicPlatform implements DynamicPlatformPlugin
       lightVersion = 1;
     }	else if (lightVersionModifier == 33){
       lightVersion = 99;
+    } else {
+      lightVersion = initialState.lightVersion;
     }
     
     if(lightTypesMap.has(lightVersion)){
