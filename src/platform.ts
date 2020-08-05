@@ -85,7 +85,7 @@ const lightTypesMap = new Map([
       simultaneousCCT: true,
       convenientName: 'RGBW Simultanious',
     }],
-  [33,  
+  [99,  
     {
       controllerType: 'DimmerStrip',
       simultaneousCCT: false,
@@ -420,17 +420,20 @@ export class HomebridgeMagichomeDynamicPlatform implements DynamicPlatformPlugin
     //set the lightVersion so that we can give the device a useful name and later know how which protocol to use
 
     //check the version modifiers. I wish there was a pattern to this.
-    if(lightVersionModifier === 4 || lightVersionModifier === 6) {
+    if(lightVersionModifier == 4 || lightVersionModifier == 6) {
       lightVersion = 10;
-    } else if ((lightVersionModifier === 51 && lightVersion === 3) || device.modelNumber.includes('AK001-ZJ2131')) {
+    } else if ((lightVersionModifier == 51 && lightVersion == 3) || device.modelNumber.includes('AK001-ZJ2131')) {
       lightVersion = 1;
-    }	
+    }	else if (lightVersionModifier == 33){
+      lightVersion = 99;
+    }
     
     if(lightTypesMap.has(lightVersion)){
+      this.log.debug('Light version: %o matches known device type records', lightVersion);
       lightParameters = lightTypesMap.get(lightVersion);
     } else {
       this.log.warn('Uknown light version: %o... type probably cannot be set. Trying anyway...', lightVersion);
-      this.log.warn('Please create an issue at https://github.com/Zacknetic/HomebridgeMagicHome-DynamicPlatform/issues and post your log.txt');
+      this.log.warn('Please create an issue at https://github.com/Zacknetic/HomebridgeMagicHome-DynamicPlatform/issues and post your homebridge.log');
       
       lightParameters = lightTypesMap.get(4);
     }
