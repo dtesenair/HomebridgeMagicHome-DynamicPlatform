@@ -5,7 +5,7 @@ import type {
 } from 'homebridge';
 import { clamp, convertHSLtoRGB, convertRGBtoHSL } from './magichome-interface/utils';
 import { HomebridgeMagichomeDynamicPlatform } from './platform';
-import { Transport } from './magichome-interface/transport';
+import { Transport } from './magichome-interface/Transport';
 
 const COMMAND_POWER_ON = [0x71, 0x23, 0x0f];
 const COMMAND_POWER_OFF = [0x71, 0x24, 0x0f];
