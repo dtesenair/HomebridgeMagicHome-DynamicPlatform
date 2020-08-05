@@ -85,7 +85,7 @@ const lightTypesMap = new Map([
       simultaneousCCT: true,
       convenientName: 'RGBW Simultanious',
     }],
-  [99,  
+  [33,  
     {
       controllerType: 'DimmerStrip',
       simultaneousCCT: false,
@@ -424,9 +424,7 @@ export class HomebridgeMagichomeDynamicPlatform implements DynamicPlatformPlugin
       lightVersion = 10;
     } else if ((lightVersionModifier === 51 && lightVersion === 3) || device.modelNumber.includes('AK001-ZJ2131')) {
       lightVersion = 1;
-    }	else if (lightVersionModifier === 33){
-      lightVersion = 99;
-    }
+    }	
     
     if(lightTypesMap.has(lightVersion)){
       lightParameters = lightTypesMap.get(lightVersion);
