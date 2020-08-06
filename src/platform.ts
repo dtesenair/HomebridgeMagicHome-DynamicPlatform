@@ -416,16 +416,19 @@ export class HomebridgeMagichomeDynamicPlatform implements DynamicPlatformPlugin
     let lightVersion;
     const lightVersionModifier = initialState.lightVersionModifier;
     
+    this.log.debug('\n Platform.ts.createAccessory(): \nAssigning controller to device: UniqueId: %o \nIpAddress %o \nModel: %o\nLight Version: %o\nLight Version Modifier: %o\n', device.uniqueId, device.ipAddress,device.modelNumber, initialState.lightVersion, initialState.lightVersionModifier);
+
     let lightParameters;
     //set the lightVersion so that we can give the device a useful name and later know how which protocol to use
 
     //check the version modifiers. I wish there was a pattern to this.
-    if(lightVersionModifier == 4 || lightVersionModifier == 6) {
-      lightVersion = 10;
+    
+    if (lightVersionModifier == 33){
+      lightVersion = 99;
     } else if ((lightVersionModifier == 51 && lightVersion == 3) || device.modelNumber.includes('AK001-ZJ2131')) {
       lightVersion = 1;
-    }	else if (lightVersionModifier == 33){
-      lightVersion = 99;
+    } else if(lightVersionModifier == 4 || lightVersionModifier == 6) {
+      lightVersion = 10;
     } else {
       lightVersion = initialState.lightVersion;
     }
@@ -436,11 +439,11 @@ export class HomebridgeMagichomeDynamicPlatform implements DynamicPlatformPlugin
     } else {
       this.log.warn('Uknown light version: %o... type probably cannot be set. Trying anyway...', lightVersion);
       this.log.warn('Please create an issue at https://github.com/Zacknetic/HomebridgeMagicHome-DynamicPlatform/issues and post your homebridge.log');
-      
       lightParameters = lightTypesMap.get(4);
     }
-
     const controller = lightParameters.controller_type;
+
+    this.log.debug('\nPlatform.ts.createAccessory(): \nLight version assigned to %o\nController Type assigned to %o', lightVersion, controller);
     return { controller,
       lightParameters,
       lightVersion,
