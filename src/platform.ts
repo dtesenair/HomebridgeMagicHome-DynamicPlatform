@@ -32,56 +32,56 @@ const accessoryType = {
 const lightTypesMap = new Map([
   [1,  
     {
-      controller_type: 'GRBStrip',
+      controllerType: 'GRBStrip',
       simultaneousCCT: false,
       convenientName: 'Simple GRB',
     }],
   [2,  
     {
-      controller_type: 'RGBWWStrip',
+      controllerType: 'RGBWWStrip',
       simultaneousCCT: true,
       convenientName: 'RGBWW Simultanious',
     }],
   [3,  
     {
-      controller_type: 'RGBWWStrip',
+      controllerType: 'RGBWWStrip',
       simultaneousCCT: true,
       convenientName: 'RGBWW Simultanious',
     }],
   [4,  
     {
-      controller_type: 'RGBStrip',
+      controllerType: 'RGBStrip',
       simultaneousCCT: false,
       convenientName: 'Simple RGB',
 
     }],
   [5,  
     {
-      controller_type: 'RGBWWBulb',
+      controllerType: 'RGBWWBulb',
       simultaneousCCT: false,
       convenientName: 'RGBWW Non-Simultanious',
     }],
   [7,  
     {
-      controller_type: 'RGBWWBulb',
+      controllerType: 'RGBWWBulb',
       simultaneousCCT: false,
       convenientName: 'RGBWW Non-Simultanious',
     }],
   [8,  
     {
-      controller_type: 'RGBWBulb',
+      controllerType: 'RGBWBulb',
       simultaneousCCT: false,
       convenientName: 'RGBW Non-Simultanious',
     }],
   [9,  
     {
-      controller_type: 'RGBWBulb',
+      controllerType: 'RGBWBulb',
       simultaneousCCT: false,
       convenientName: 'RGBW Non-Simultanious',
     }],
   [10,  
     {
-      controller_type: 'RGBWStrip',
+      controllerType: 'RGBWStrip',
       simultaneousCCT: true,
       convenientName: 'RGBW Simultanious',
     }],
@@ -199,7 +199,7 @@ export class HomebridgeMagichomeDynamicPlatform implements DynamicPlatformPlugin
    */
         if (!existingAccessory) { 
 
-          const updatedDevice = await this.createAccessory(device);
+          const updatedDevice = await this.determineController(device);
           
           const accessory = new this.api.platformAccessory(updatedDevice.lightParameters.convenientName, uuid);
 
@@ -410,7 +410,7 @@ export class HomebridgeMagichomeDynamicPlatform implements DynamicPlatformPlugin
     
   }
 
-  async createAccessory(device){
+  async determineController(device){
     
     const initialState = await this.getInitialState (device.ipAddress);
     let lightVersion;
@@ -432,7 +432,7 @@ export class HomebridgeMagichomeDynamicPlatform implements DynamicPlatformPlugin
     } else {
       lightVersion = initialState.lightVersion;
     }
-    
+
     if(lightTypesMap.has(lightVersion)){
       this.log.debug('Light version: %o matches known device type records', lightVersion);
       lightParameters = lightTypesMap.get(lightVersion);
@@ -441,9 +441,9 @@ export class HomebridgeMagichomeDynamicPlatform implements DynamicPlatformPlugin
       this.log.warn('Please create an issue at https://github.com/Zacknetic/HomebridgeMagicHome-DynamicPlatform/issues and post your homebridge.log');
       lightParameters = lightTypesMap.get(4);
     }
-    const controller = lightParameters.controller_type;
+    const controller = lightParameters.controllerType;
 
-    this.log.debug('\nPlatform.ts.createAccessory(): \nLight version assigned to %o\nController Type assigned to %o', lightVersion, controller);
+    this.log.debug('\nPlatform.ts.determineController(): \nLight version assigned to %o\nController Type assigned to %o', lightVersion, controller);
     return { controller,
       lightParameters,
       lightVersion,
