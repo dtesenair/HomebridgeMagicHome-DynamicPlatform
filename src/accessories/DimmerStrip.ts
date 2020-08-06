@@ -3,6 +3,9 @@ import { HomebridgeMagichomeDynamicPlatformAccessory } from '../PlatformAccessor
 import { CharacteristicEventTypes } from 'homebridge';
 import type { CharacteristicValue,CharacteristicSetCallback, CharacteristicGetCallback} from 'homebridge';
 
+const COMMAND_POWER_ON = [0x71, 0x23, 0x0f];
+const COMMAND_POWER_OFF = [0x71, 0x24, 0x0f];
+
 export class DimmerStrip extends HomebridgeMagichomeDynamicPlatformAccessory {
   constructor(platform,
     accessory,
@@ -91,7 +94,38 @@ export class DimmerStrip extends HomebridgeMagichomeDynamicPlatformAccessory {
     }
   }
 
-  
+  /**
+   * Handle "SET" requests from HomeKit
+   * These are sent when the user changes the state of an accessory, for example, turning on a Light bulb.
+   */
+  setOn(value: CharacteristicValue, callback: CharacteristicSetCallback) {
+
+
+    this.lightState.On = value as boolean;
+    this.send(this.lightState.On ? COMMAND_POWER_ON : COMMAND_POWER_OFF);
+
+    this.platform.log.debug('Set Characteristic On -> %o for device: %o ', value, this.accessory.context.device.uniqueId);
+
+    // you must call the callback function
+    callback(null);
+  }
+
+  /**
+   ** @getOn
+   * instantly retrieve the current on/off state stored in our object
+   * next call this.getState() which will update all values asynchronously as they are ready
+   */
+  getOn(callback: CharacteristicGetCallback) {
+
+    const isOn = this.lightState.On;
+
+    //update state with actual values asynchronously
+    this.getState();
+
+    this.platform.log.debug('Get Characteristic On -> %o for device: %o ', isOn, this.accessory.context.device.uniqueId);
+    callback(null, isOn);
+  }
+
   /*
    * Handle "SET" requests from HomeKit
    * These are sent when the user changes the state of an accessory, for example, changing the Hue
@@ -117,6 +151,22 @@ export class DimmerStrip extends HomebridgeMagichomeDynamicPlatformAccessory {
 
     
   }//setColor
+
+  getBrightness(callback: CharacteristicGetCallback) {
+
+    // implement your own code to check if the device is on
+    const brightness = this.lightState.Brightness;
+
+    // dont update the actual values from brightness, it is impossible to determine by rgb values alone
+    //this.getState();
+
+    this.platform.log.debug('Get Characteristic Brightness -> %o for device: %o ', brightness, this.accessory.context.device.uniqueId);
+    this.getState();
+    // you must call the callback function
+    // the first argument should be null if there were no errors
+    // the second argument should be the value to return
+    callback(null, brightness);
+  }
     
     
 }
